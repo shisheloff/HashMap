@@ -113,7 +113,7 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
     }
 
     // получение текущего уровня загруженности
-    public double getPresentLoudFactor(){ return (double) (numOfElements + 1)/this.table.length;}
+    public double getPresentLoudFactor(){ return (double) numOfElements/this.table.length;}
 
     // перехэширование
     @SuppressWarnings("unchecked")
@@ -133,6 +133,7 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
         for (int i = 0; i < table.length; i++) {
             Pair<Key, Value> temp = table[i];
             if(temp == null) continue;
+            System.out.print("Index: " + i + " ");
             while (temp != null){
                 System.out.print(temp.toString() + "   ");
                 temp = temp.getNext();
