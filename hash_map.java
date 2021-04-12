@@ -1,11 +1,10 @@
 import java.util.NoSuchElementException;
-import java.util.function.Consumer;
 public class hash_map<Key extends Comparable<? super Key>, Value>{
     
     private static final double DEFAULT_LOAD_FACTOR = 2.0;           // максимальный уровень загруженности
     private static final int DEFAULT_CAPACITY = 10;
     private int numOfElements;                                       // число элементов
-    private Pair<Key, Value>[] table;                                            // список элементов
+    Pair<Key, Value>[] table;                                            // список элементов
     private double loudFactor;                                       // уровень загруженности, если нужно изменить DEFAULT_LOAD_FACTOR
 
     @SuppressWarnings("unchecked")
@@ -39,14 +38,12 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
     // добавление пары ключ-значение
     public Value addPair(Key key, Value value){
         if (key == null || value == null) throw new IllegalArgumentException("key and value must not be null");
-        if (getPresentLoudFactor() > loudFactor) {
-            resize(table.length * 2 + 1);
-        }
+        
         int index = key.hashCode() % table.length;
         if (index < 0) index += table.length;
         if (table[index] == null) table[index] = new Pair<>(key, value, null);
         else {
-            Pair<Key, Value> temp = new Pair<>(key, value);
+            Pair<Key, Value> temp = table[index];
             while (temp.getNext() != null && temp.getKey().equals(key)) {
                 temp.getNext();
             }
@@ -59,6 +56,9 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
             }
         }
         numOfElements++;
+        if (getPresentLoudFactor() > loudFactor) {
+            resize(table.length * 2 + 1);
+        }
         return null;
     }
     
@@ -129,14 +129,15 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
     }   
 
     public void printHashMap(){ 
+        System.out.println("HashMap: ");
         for (int i = 0; i < table.length; i++) {
             Pair<Key, Value> temp = table[i];
+            if(temp == null) continue;
             while (temp != null){
-                System.out.print(temp.getKey() + "----->" + temp.getValue());
-                System.out.println();
+                System.out.print(temp.toString() + "   ");
                 temp = temp.getNext();
-
             }
+            System.out.println();
         }
         System.out.println();
     }

@@ -28,5 +28,5 @@ public class Pair<Key, Value>{
     // устанавливиает значение пары
     public void setValue(Value value) { this.value = value; }
     // переодпреление метода toString
-    public String toString() { return key + "--->" + value; }
+    public String toString() { return "key: " + key + " ---> " + "value: " + value; }
 }
