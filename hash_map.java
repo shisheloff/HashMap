@@ -1,4 +1,5 @@
 import java.util.NoSuchElementException;
+import java.util.function.Consumer;
 public class hash_map<Key extends Comparable<? super Key>, Value>{
     
     private static final double DEFAULT_LOAD_FACTOR = 2.0;           // максимальный уровень загруженности
@@ -126,4 +127,18 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
         }
         table = newTable;
     }   
+
+    public void printHashMap(){ 
+        for (int i = 0; i < table.length; i++) {
+            Pair<Key, Value> temp = table[i];
+            while (temp != null){
+                System.out.print(temp.getKey() + "----->" + temp.getValue());
+                System.out.println();
+                temp = temp.getNext();
+
+            }
+        }
+        System.out.println();
+    }
+
 }
