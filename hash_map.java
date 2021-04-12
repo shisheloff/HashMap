@@ -1,6 +1,6 @@
 import java.util.NoSuchElementException;
 public class hash_map<Key extends Comparable<? super Key>, Value>{
-    
+
     private static final double DEFAULT_LOAD_FACTOR = 2.0;           // максимальный уровень загруженности
     private static final int DEFAULT_CAPACITY = 10;
     private int numOfElements;                                       // число элементов
@@ -142,5 +142,4 @@ public class hash_map<Key extends Comparable<? super Key>, Value>{
         }
         System.out.println();
     }
-
 }
