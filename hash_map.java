@@ -1,65 +1,129 @@
-import java.util.LinkedList;
-public class hashmap<Key extends Comparable<? super Key>, Value>{
+import java.util.NoSuchElementException;
+public class hash_map<Key extends Comparable<? super Key>, Value>{
     
-    private int capacity;                                            // размер списка
-    private static final float DEFAULT_LOAD_FACTOR = 2.0f;           // максимальный уровень загруженности
+    private static final double DEFAULT_LOAD_FACTOR = 2.0;           // максимальный уровень загруженности
+    private static final int DEFAULT_CAPACITY = 10;
     private int numOfElements;                                       // число элементов
-    private int numOfLists;                                          // число списков
-    private LinkedList<Pair>[] elements;                             // список элементов
-    private float loudFactor;                                        // уровень загруженности, если нужно изменить DEFAULT_LOAD_FACTOR
-
-    // класс пара ключ-значение
-    private class Pair{
-        private Key key;
-        private Value value;
-
-        public Pair(Key key, Value value){ 
-            this.key = key;
-            this.value = value;
-        }
-
-        public Key getKey() { return key; }
-        public Value getValue() { return value; }
-        public void setValue(Value value) { this.value = value; }
-        public boolean hasSameKey(Key key) {return this.key == null ? this.key == key : this.key.equals(key); }
-    }
-
+    private Pair<Key, Value>[] table;                                            // список элементов
+    private double loudFactor;                                       // уровень загруженности, если нужно изменить DEFAULT_LOAD_FACTOR
 
     @SuppressWarnings("unchecked")
-    public hashmap(int capacity){ 
-        this.capacity = capacity;
-        this.elements = (LinkedList<Pair>[]) new LinkedList[capacity];
+    public hash_map(){ 
+        this.loudFactor = DEFAULT_LOAD_FACTOR;
+        this.numOfElements = 0;
+        this.table =  new Pair[DEFAULT_CAPACITY];
     }
 
-    public int getNumOfElements(){ return numOfElements;}                                            // возвращает число элементов
-    public float getLoudFactor(){ return (loudFactor == 0.0f) ? DEFAULT_LOAD_FACTOR : loudFactor;}   // возвращает уровень загруженности
+    @SuppressWarnings("unchecked")
+    public hash_map(int capacity){ 
+        this.table =  new Pair[capacity];
+        this.loudFactor = DEFAULT_LOAD_FACTOR;
+        this.numOfElements = 0;
+    }
+
+    public int getNumOfElements(){ return numOfElements; }       // возвращает число элементов
+    
+    public double getLoudFactor(){ 
+        return loudFactor;
+    }          // возвращает уровень загруженности
 
 
     // удаление всех элементов
-    public void deleteAllElements(){}
+    @SuppressWarnings("unchecked")
+    public void deleteAllElements(){
+        table = new Pair[DEFAULT_CAPACITY];
+        numOfElements = 0;
+    }
 
     // добавление пары ключ-значение
     public Value addPair(Key key, Value value){
-
+        if (key == null || value == null) throw new IllegalArgumentException("key and value must not be null");
+        if (getPresentLoudFactor() > loudFactor) {
+            resize(table.length * 2 + 1);
+        }
+        int index = key.hashCode() % table.length;
+        if (index < 0) index += table.length;
+        if (table[index] == null) table[index] = new Pair<>(key, value, null);
+        else {
+            Pair<Key, Value> temp = new Pair<>(key, value);
+            while (temp.getNext() != null && temp.getKey().equals(key)) {
+                temp.getNext();
+            }
+            if (temp.getKey().equals(key)){
+                Value oldValue = temp.getValue();
+                temp.setValue(value);
+                return oldValue;
+            } else {
+                temp.setNext(new Pair<>(key, value));
+            }
+        }
+        numOfElements++;
         return null;
     }
-
+    
     // получение элемента по ключу
-    public Value getValue(Key key) { return null; }
+    public Value get(Key key) { 
+        if (key == null) throw new IllegalArgumentException("Key can't be null");
+        int index = key.hashCode() % table.length;
+        if (index < 0) index += table.length;
+        if (table[index] == null) return null;
+        Pair<Key, Value> temp = table[index];
+        while (temp != null && temp.getKey().equals(key)){
+            temp = temp.getNext();
+        }
+        if(temp != null) return temp.getValue();
+        // если значение по ключу не найдено
+        return null; 
+    }
 
     // удаление пары по ключу
-    public Value deleteElement(Key key){ return null;}
+    public Value deleteElement(Key key){ 
+        if (key == null ) throw new IllegalArgumentException("Key can't be null");
+        int index = key.hashCode() % table.length;
+        if (index < 0) index += table.length;
+        if (table[index] == null) return null;
+        if (table[index] != null) {
+            Pair<Key, Value> previous = null;
+            Pair<Key, Value> temp = table[index];
+            while (temp.getNext() != null && !temp.getKey().equals(key)){
+                previous = temp;
+                temp = temp.getNext();
+            }
+            if (temp.getKey().equals(key)){
+                Value val = temp.getValue();
+                if (previous == null ){
+                    table[index] = temp.getNext();
+                } else {
+                    previous.setNext(temp.getNext());
+                }
+                numOfElements--;
+                return val;
+            }
+        }
+        throw new NoSuchElementException("Key doesn't exist in table");
+    }
 
     // изменение уровня загруженности
-    public void changeLoudFacktor(float newLoudFacktor){}
+    public void changeLoudFactor(double newLoudFactor){
+        this.loudFactor = newLoudFactor;
+        if(getPresentLoudFactor() > loudFactor){
+            resize(2 * table.length + 1);
+        }
+    }
 
     // получение текущего уровня загруженности
-    public float getPresentLoudFacktor(){ return (float) numOfElements/numOfLists;}
+    public double getPresentLoudFactor(){ return (double) (numOfElements + 1)/this.table.length;}
 
     // перехэширование
-    public void rehash(){}
-
-
-
-    
+    @SuppressWarnings("unchecked")
+    private void resize(int newSize){
+        Pair<Key, Value>[] newTable = new Pair[newSize];
+        for (Pair<Key, Value> temp : table){
+            if (temp != null){
+                int index = Math.abs(temp.getKey().hashCode() % table.length);
+                newTable[index] = temp;
+            }
+        }
+        table = newTable;
+    }   
 }
