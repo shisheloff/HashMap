@@ -3,7 +3,6 @@ public class test_hashmap {
         hash_map<Integer, Integer> map = new hash_map<Integer, Integer>();
         for (int i = 0; i < 50; i++) {
             map.addPair(i, i);
-           // System.out.println("Pair: " + "key: " + i + " ---> " + "value: " + i + " added");
         }
         System.out.println("Вывод HashMap после добавления 50 элементов");
         map.printHashMap();
@@ -12,7 +11,6 @@ public class test_hashmap {
                             + "\nКоличество элементов: " + map.getNumOfElements() + "\n");
         for (int i = 0; i < 10; i++){
             map.deleteElement(i);
-           // System.out.println("element " + i + " was deleted.");
         }
         System.out.println("Вывод HashMap после удаления 10 элементов");
         map.printHashMap();
