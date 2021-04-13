@@ -29,5 +29,4 @@ public class test_hashmap {
                              + "\nМаксимальный уровень загруженности: " + map.getLoudFactor() 
                              + "\nКоличество элементов: " + map.getNumOfElements() + "\n");
     }
-    
 }
