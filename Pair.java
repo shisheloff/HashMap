@@ -5,7 +5,6 @@ public class Pair<Key, Value>{
     private Value value;                // значение пары
     private Pair<Key, Value> next;      // ссылка на следующий элемент
 
-
     // конструктор с параметрами: ключ, значение
     public Pair(Key key, Value value){ 
         this(key, value, null);
@@ -16,7 +15,7 @@ public class Pair<Key, Value>{
         this.value = value;
         this.next = next;
     }
-
+    
     // предоставляет ссылку на следующий элемент
     public Pair<Key, Value> getNext() { return next; }
     // устанавливает ссылку на следующий элемент
